@@ -135,11 +135,6 @@ void Led8x8::putMax7219Reg( byte reg, byte col)
   digitalWrite(m_LoadPin, HIGH);
 }
 
-void Led8x8::putMax7219CharLine(byte data) 
-{
-
-}
-
 void Led8x8::reflash()
 {
 	for (int e = max7219_reg_digit0,i=0; e <= 8; e++,i++) 

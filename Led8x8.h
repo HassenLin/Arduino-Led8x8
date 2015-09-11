@@ -1,5 +1,5 @@
-#ifndef font8x8_h
-#define font8x8_h
+#ifndef Led8x8_h
+#define Led8x8_h
 
 #include <Arduino.h>
 
@@ -11,8 +11,6 @@ class Led8x8{
 	void getCharFont(byte Char,byte *mem);
 	void putMax7219Byte(byte data); 
 	void putMax7219Reg( byte reg, byte col);
-	void putMax7219CharLine(byte data); 
-	void putMax7219Char( byte reg, byte col);
   void copyStr(const char *str);
 	public:
 	byte Memory[8];
