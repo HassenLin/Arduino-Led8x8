@@ -14,7 +14,7 @@ class Led8x8{
   void copyStr(const char *str);
 	public:
 	byte Memory[8];
-	bool Finish,CycleRotate;
+	bool Finish,CycleRotate,Mirror;
 	Led8x8(int DataPin,int LoadPin,int ClockPin);
 	void loadChar(byte Char);
 	void scrollUp(byte Char1,byte Char2,int n);

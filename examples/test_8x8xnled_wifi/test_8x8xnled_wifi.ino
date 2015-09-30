@@ -1,21 +1,20 @@
-#include "Led8x8.h"
+#include "Led8x8xn.h"
 #include "ESP8266.h"
 #include "dht11.h"
-int dataIn = 2;
-int load = 3;
-int clk = 4;
+byte dataIn[] = {4,5};
+byte load = 2;
+byte clk = 3;
 int dir = 0;
 int interval = 100;
-Led8x8 leds(dataIn, load, clk);
+Led8x8xn leds(dataIn, load, clk);
 ESP8266 wifi(Serial, 9600);
 char HString[128] = "Hello World.";
-char VString[128] = "Hassen Project.";
 bool bRotateString = false;
 void setup () {
   Serial.write("AT+CIOBAUD=57600\r\n");
   Serial.end();
   Serial.begin(57600);
-  wifi.setSoftAPParam("8x8Led", "01234567");
+  wifi.setSoftAPParam("8x8x2Led", "01234567");
   if (wifi.setOprToSoftAP()) {
     wifi.setDHCP(0, 1);
     wifi.enableMUX();
@@ -38,19 +37,10 @@ void loop () {
       leds.stringScrollLeft(HString);
       dir = 0;
     }
-    else if (buffer[0] == '2')
-    {
-      strcpy(VString, (char*)buffer + 1);
-      leds.stringScrollUp(VString);
-      dir = 2;
-    }
     else if (buffer[0] == '3')
     {
       bRotateString = !bRotateString;
-      if (dir < 2)
-        leds.stringScrollLeft(HString, true);
-      else
-        leds.stringScrollUp(VString, true);
+      leds.stringScrollLeft(HString, true);
     }
     else if (buffer[0] == '4')
       leds.Mirror = !leds.Mirror;
@@ -65,20 +55,14 @@ void loop () {
   if (!bRotateString && leds.Finish)
   {
     dir++;
-    if (dir >= 4)
+    if (dir >= 2)
       dir = 0;
 
     if (dir == 0 && !HString[0])
       dir = 2;
-    if (dir == 2 && !VString[0])
-      dir = 0;
     if (dir == 0)
       leds.stringScrollLeft(HString);
     if (dir == 1)
       leds.stringScrollRight();
-    if (dir == 2)
-      leds.stringScrollUp(VString);
-    if (dir == 3)
-      leds.stringScrollDown();
   }
 }
