@@ -16,6 +16,7 @@ class Led8x8{
 	byte Memory[8];
 	bool Finish,CycleRotate,Mirror;
 	Led8x8(int DataPin,int LoadPin,int ClockPin);
+	void setBrightness(byte Brightness); //0~15 
 	void loadChar(byte Char);
 	void scrollUp(byte Char1,byte Char2,int n);
 	void scrollDown(byte Char1,byte Char2,int n);

@@ -7,14 +7,12 @@ int clk = 4;
 int dir = 0;
 int interval = 100;
 Led8x8 leds(dataIn, load, clk);
-ESP8266 wifi(Serial, 9600);
+ESP8266 wifi(Serial);
 char HString[128] = "Hello World.";
 char VString[128] = "Hassen Project.";
 bool bRotateString = false;
 void setup () {
-  Serial.write("AT+CIOBAUD=57600\r\n");
-  Serial.end();
-  Serial.begin(57600);
+  wifi.begin();
   wifi.setSoftAPParam("8x8Led", "01234567");
   if (wifi.setOprToSoftAP()) {
     wifi.setDHCP(0, 1);

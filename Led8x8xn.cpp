@@ -50,8 +50,13 @@ Led8x8xn::Led8x8xn(byte DataPin[],byte LoadPin,byte ClockPin)
   { // empty registers, turn all LEDs off
     putMax7219Reg(e, 0);
   }
-  putMax7219Reg(max7219_reg_intensity, 0x0f & 0x0f);    // the first 0x0f is the value you can set
+  setBrightness(4);
   // range: 0x00 to 0x0f
+}
+
+void Led8x8xn::setBrightness(byte Brightness)
+{
+	putMax7219Reg(max7219_reg_intensity, Brightness & 0x0f); 
 }
 
 void Led8x8xn::getCharFont(byte Char,byte *mem)
