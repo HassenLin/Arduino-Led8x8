@@ -10,7 +10,7 @@ Need Libraries:<br>
 	3. Led8x8xn : https://github.com/HassenLin/Arduino-Led8x8<br>
 <br>
 Using:<br>
- 1. Join AP : "8x8x2Led", password<br>
+ 1. Join AP : "8x8x2Led", password: "01234567"<br>
  2. Connect to IP "192.168.4.1"<br>
  3. Send CMD:<br>
  		1+[string] : Show String.<br>
