@@ -1,6 +1,5 @@
 #include <Led8x8xn.h>
 #include <ESP8266.h>
-#include <dht11.h>
 #include <Time.h>
 byte dataIn[] = {4, 5};
 byte load = 2;
@@ -35,8 +34,8 @@ void timeToHString()
   sprintf(HString, "%02d:%02d ", tm.Hour, tm.Minute);
 }
 
-char SSID[32] = "DSC_ADSL_TPLINK_ATC";
-char PASSWORD[16] = "22988120";
+char SSID[32] = "SSID";
+char PASSWORD[16] = "PASSWD";
 
 void setup () {
   wifi.begin();
