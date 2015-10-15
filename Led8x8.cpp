@@ -1,5 +1,11 @@
-#include <avr/pgmspace.h>
 #include "Led8x8.h"
+
+#ifdef ESP8266_CLOCK
+#include <pgmspace.h>
+#else
+#include <avr/pgmspace.h>
+#endif
+
 #include "font8x8_basic.h"
 #include "font8x8_control.h"
 #include "font8x8_ext_latin.h"
@@ -62,9 +68,7 @@ void Led8x8::getCharFont(byte Char,byte *mem)
 	if(Char<128)
 	{
 			for(i=0;i<8;i++)
-			{
-				mem[i]=pgm_read_byte_near(font8x8_basic[Char]+i);
-			}
+					mem[i]=pgm_read_byte_near(font8x8_basic[Char]+i);
 	}
 	else
 	{
@@ -72,17 +76,13 @@ void Led8x8::getCharFont(byte Char,byte *mem)
 		 	if(Char<32)
 			{
 				for(i=0;i<8;i++)
-				{
 					mem[i]=pgm_read_byte_near(font8x8_control[Char]+i);
-				}
 			}
 			else
 			{	
 				Char-=32;
 				for(i=0;i<8;i++)
-				{
-					mem[i]=pgm_read_byte_near(font8x8_ext_latin[Char]+i);
-				}
+ 					mem[i]=pgm_read_byte_near(font8x8_ext_latin[Char]+i);
 			}
 	 }
 }

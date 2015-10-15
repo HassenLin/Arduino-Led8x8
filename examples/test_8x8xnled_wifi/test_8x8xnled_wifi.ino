@@ -15,50 +15,17 @@ bool bRotateString = false;
 bool bShowTime = false;
 bool bShowDate = false;
 int interval = 100;
-time_t lsecs=0;
+time_t lsecs = 0;
 
 time_t ntpUnixTime (void)
 {
-  time_t time = 0;
-  byte buffer[48];
-  wifi.registerUDP(4, "pool.ntp.org", 123);
-
-  // Only the first four bytes of an outgoing NTP packet need to be set
-  // appropriately, the rest can be whatever.
-  const long ntpFirstFourBytes = 0xEC0600E3; // NTP request header
-  wifi.send(4,  (byte *)&ntpFirstFourBytes, 48);
-  // Wait for response; check every pollIntv ms up to maxPoll times
-  const int pollIntv = 150;   // poll every this many ms
-  const byte maxPoll = 15;    // poll up to this many times
-
-  for (byte i = 0; i < maxPoll; i++) {
-    if (wifi.recv(4, buffer, 48, pollIntv) >= 45)
-    {
-
-      for (byte i = 40; i < 44; i++)
-        time = time << 8 | buffer[i];
-
-      // Round to the nearest second if we want accuracy
-      // The fractionary part is the next byte divided by 256: if it is
-      // greater than 500ms we round to the next second; we also account
-      // for an assumed network delay of 50ms, and (0.5-0.05)*256=115;
-      // additionally, we account for how much we delayed reading the packet
-      // since its arrival, which we assume on average to be pollIntv/2.
-      time += (buffer[44] > (115 - pollIntv / 8));
-      time -= 2208988800ul ;   // convert NTP time to Unix time
-      time += 8 * 60 * 60; //Taipei Time +8:00
-      break;
-    }
-  }
-
-  wifi.unregisterUDP(4);
-  return time;
+  return wifi.ntpTime(4);
 }
 void dateToHString()
 {
   tmElements_t tm;
   breakTime(lsecs, tm);
-  sprintf(HString, "%04d/%02d/%02d %02d:%02d ", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute);
+  sprintf(HString, "%04d-%02d-%02d %02d:%02d ", tm.Year + 1970, tm.Month, tm.Day, tm.Hour, tm.Minute);
 }
 
 void timeToHString()
@@ -75,18 +42,14 @@ void setup () {
   wifi.begin();
   wifi.setSoftAPParam("8x8x2Led", "01234567");
   if (wifi.setOprToStationSoftAP()) {
-    if (wifi.joinAP(SSID, PASSWORD))
-    {
-      wifi.setDHCP(0, 1);
-      wifi.enableMUX();
-      wifi.startTCPServer(80);
-      setSyncInterval(86400);      
-      setSyncProvider(ntpUnixTime);
-      timeToHString();
-      bShowTime = true;
-    }
-    else
-      sprintf(HString, "Join %s error", SSID);
+    wifi.joinAP(SSID, PASSWORD);
+    wifi.setDHCP(0, 1);
+    wifi.enableMUX();
+    wifi.startTCPServer(80);
+    setSyncInterval(86400);
+    setSyncProvider(ntpUnixTime);
+    timeToHString();
+    bShowTime = true;
   }
   else
     sprintf(HString, "Wifi error");
@@ -108,6 +71,21 @@ void loop () {
       dir = 0;
       bShowTime = false;
       bShowDate = false;
+    }
+    else if (buffer[0] == 'i')
+    {
+      strcpy(HString, wifi.getLocalIP().c_str());
+      int i = 0;
+      while (HString[i])
+      {
+        if (HString[i] == '\r' || HString[i] == '\n')
+          HString[i] = ' ';
+        i++;
+        leds.stringScrollLeft(HString);
+        dir = 0;
+        bShowTime = false;
+        bShowDate = false;
+      }
     }
     else if (buffer[0] == 'a')
     {
@@ -181,8 +159,8 @@ void loop () {
   }
 
   leds.run();
-  time_t csec=now();
-  if(lsecs!=csec)
+  time_t csec = now();
+  if (lsecs != csec)
   {
     lsecs = csec;
     if (bShowTime)
@@ -190,7 +168,7 @@ void loop () {
     if (bShowDate)
       dateToHString();
   }
-  
+
   if (!bRotateString && leds.Finish)
   {
 
