@@ -147,9 +147,10 @@ void Led8x8::reflash()
 	{
   	digitalWrite(m_LoadPin, LOW);       // begin
   	putMax7219Byte(e);  
-  	byte data=Memory[i];
+
   	if(!Mirror)
   	{
+  		byte data=Memory[i];
  			for(int j=0;j<8;j++,data>>=1)
 			{
     			digitalWrite(m_ClockPin, LOW);   // tick
@@ -159,6 +160,7 @@ void Led8x8::reflash()
   	}
   	else
   	{
+  		byte data=Memory[7-i];
  			for(int j=0;j<8;j++,data<<=1)
 			{
     			digitalWrite(m_ClockPin, LOW);   // tick

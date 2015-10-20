@@ -166,12 +166,20 @@ void Led8x8xn::reflash()
 		for(k=0;k<NLEDS;k++)
 		{
 		//	data[k] = Memory[k][i];
-		
-			data[k] = 0;
+
 			for(j=0;j<8;j++)
-			{
- 		   data[k]<<=1;
- 		   data[k] |= (Memory[k][j]>>i)&0x1;
+			{				
+ 		   if(Mirror)
+ 		   	{
+ 		   		byte kk=NLEDS-k-1;
+ 		   		data[kk]<<=1;
+ 		   		data[kk] |= ((Memory[k][j]<<i)&0x80)?1:0;
+ 		   	}
+ 		   else
+ 		   	{
+ 		   		data[k]<<=1;
+ 		   		data[k] |= (Memory[k][j]>>i)&0x1;
+ 		   	}
  		  }
  		
  		}
@@ -179,8 +187,6 @@ void Led8x8xn::reflash()
   	digitalWrite(m_LoadPin, LOW);       // begin
   	putMax7219Byte(max7219_reg_digit0+i);  
 
-  	if(!Mirror)
-  	{
  			for(j=0;j<8;j++)
 			{
     			digitalWrite(m_ClockPin, LOW);   // tick
@@ -191,20 +197,6 @@ void Led8x8xn::reflash()
     			}
     			digitalWrite(m_ClockPin, HIGH);   // tock
   		}
-  	}
-  	else
-  	{
- 			for(j=0;j<8;j++)
-			{
-    			digitalWrite(m_ClockPin, LOW);   // tick
-    			for(k=0;k<NLEDS;k++)
-    			{
-    				digitalWrite(m_DataPin[k], (data[k] & 0x80)?HIGH:LOW);// send 1
-    				data[k]<<=1;
-    			}
-    			digitalWrite(m_ClockPin, HIGH);   // tock
-  		}
-  	}
   	digitalWrite(m_LoadPin, LOW);       // and load da stuff
   	digitalWrite(m_LoadPin, HIGH);
   }
